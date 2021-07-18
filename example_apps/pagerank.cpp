@@ -30,6 +30,9 @@
 #include <string>
 #include <fstream>
 #include <cmath>
+#include <sys/stat.h>
+#include <assert.h>
+#include <iostream>
 
 #define GRAPHCHI_DISABLE_COMPRESSION
 
@@ -124,11 +127,34 @@ struct PagerankProgramInmem : public GraphChiProgram<VertexDataType, EdgeDataTyp
     PagerankProgramInmem(int nvertices) :   pr(nvertices, RANDOMRESETPROB) {}
     
     void update(graphchi_vertex<VertexDataType, EdgeDataType> &v, graphchi_context &ginfo) {
+        std::string f_name = "./log/vertex_" + std::to_string(v.vertexid) + ".access";
+        std::fstream fs;
+        char hex_buff[129];
+        uint64_t * blk_ptr;
+        char trace_format [10] = "%0128lx";
+
         if (ginfo.iteration > 0) {
+            fs.open(f_name, std::fstream::app);
             float sum=0;
+            // Read in-edge
             for(int i=0; i < v.num_inedges(); i++) {
-              sum += pr[v.inedge(i)->vertexid];
+                sum += pr[v.inedge(i)->vertexid];
+                // blk_ptr points to a block
+                blk_ptr = (uint64_t *)&(v.inedge(i)->vertexid);
+                // Format string
+                // sprintf(hex_buff, trace_format, *blk_ptr);
+                fs << "R " << &(v.inedge(i)->vertexid) << std::endl;
+                blk_ptr = (uint64_t *)&(pr[v.inedge(i)->vertexid]);
+                // sprintf(hex_buff, trace_format, *blk_ptr);
+                fs << "R " << &pr[v.inedge(i)->vertexid] << std::endl;
             }
+            // Write out-edge
+            blk_ptr = (uint64_t *)&(v.vertexid);
+            // sprintf(hex_buff, trace_format, *blk_ptr);
+            fs << "R " << &(v.vertexid) << " " << std::endl;
+            blk_ptr = (uint64_t *)&(pr[v.id()]);
+            // sprintf(hex_buff, trace_format, *blk_ptr);
+            fs << "W " << &(pr[v.id()]) << " " << std::endl;
             if (v.outc > 0) {
                 pr[v.id()] = (RANDOMRESETPROB + (1 - RANDOMRESETPROB) * sum) / v.outc;
             } else {
@@ -136,11 +162,15 @@ struct PagerankProgramInmem : public GraphChiProgram<VertexDataType, EdgeDataTyp
             }
         } else if (ginfo.iteration == 0) {
             if (v.outc > 0) pr[v.id()] = 1.0f / v.outc;
+            struct stat buffer;
+            bool exist = (stat(f_name.c_str(), &buffer) == 0);
+            assert(exist == false);
         }
         if (ginfo.iteration == ginfo.num_iterations - 1) {
             /* On last iteration, multiply pr by degree and store the result */
             v.set_data(v.outc > 0 ? pr[v.id()] * v.outc : pr[v.id()]);
         }
+        fs.close();
     }
     
 };

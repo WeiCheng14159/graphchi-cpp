@@ -143,18 +143,18 @@ struct PagerankProgramInmem : public GraphChiProgram<VertexDataType, EdgeDataTyp
                 blk_ptr = (uint64_t *)&(v.inedge(i)->vertexid);
                 // Format string
                 // sprintf(hex_buff, trace_format, *blk_ptr);
-                fs << "R " << &(v.inedge(i)->vertexid) << std::endl;
+                // fs << "R " << &(v.inedge(i)->vertexid) << std::endl;
                 blk_ptr = (uint64_t *)&(pr[v.inedge(i)->vertexid]);
                 // sprintf(hex_buff, trace_format, *blk_ptr);
-                fs << "R " << &pr[v.inedge(i)->vertexid] << std::endl;
+                // fs << "R " << &pr[v.inedge(i)->vertexid] << std::endl;
             }
             // Write out-edge
             blk_ptr = (uint64_t *)&(v.vertexid);
             // sprintf(hex_buff, trace_format, *blk_ptr);
-            fs << "R " << &(v.vertexid) << " " << std::endl;
+            // fs << "R " << &(v.vertexid) << " " << std::endl;
             blk_ptr = (uint64_t *)&(pr[v.id()]);
             // sprintf(hex_buff, trace_format, *blk_ptr);
-            fs << "W " << &(pr[v.id()]) << " " << std::endl;
+            // fs << "W " << &(pr[v.id()]) << " " << std::endl;
             if (v.outc > 0) {
                 pr[v.id()] = (RANDOMRESETPROB + (1 - RANDOMRESETPROB) * sum) / v.outc;
             } else {

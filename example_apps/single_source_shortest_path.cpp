@@ -71,7 +71,7 @@ struct SSSPProgram : public GraphChiProgram<VertexDataType, EdgeDataType> {
             float curr_min_dist = vertex.get_data();
             for(int i=0; i < vertex.num_inedges(); i++) {
                 float min_dist = vertex.inedge(i)->get_data();
-                if(min_dist != FLT_MAX && min_dist < curr_min_dist){
+                if(min_dist < curr_min_dist){
                     curr_min_dist = min_dist;
                 }
             }

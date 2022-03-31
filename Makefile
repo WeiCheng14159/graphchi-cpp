@@ -8,7 +8,7 @@ HEADERS=$(shell find . -name '*.hpp')
 
 
 all: apps tests 
-apps: example_apps/convert_to_adjacency example_apps/connectedcomponents example_apps/pagerank example_apps/pagerank_functional example_apps/communitydetection example_apps/unionfind_connectedcomps example_apps/stronglyconnectedcomponents example_apps/trianglecounting example_apps/randomwalks example_apps/minimumspanningforest example_apps/single_source_shortest_path example_apps/degree_distribution example_apps/articlerank
+apps: example_apps/convert_to_adjacency example_apps/connectedcomponents example_apps/pagerank example_apps/pagerank_functional example_apps/communitydetection example_apps/unionfind_connectedcomps example_apps/stronglyconnectedcomponents example_apps/trianglecounting example_apps/randomwalks example_apps/minimumspanningforest example_apps/single_source_shortest_path example_apps/degree_distribution example_apps/articlerank example_apps/bfs
 als: example_apps/matrix_factorization/als_edgefactors  example_apps/matrix_factorization/als_vertices_inmem
 tests: tests/basic_smoketest tests/bulksync_functional_test tests/dynamicdata_smoketest tests/test_dynamicedata_loader
 
